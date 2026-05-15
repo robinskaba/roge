@@ -61,8 +61,14 @@ func runClone(cmd *cobra.Command, args []string) {
 	repo.Asset.AssetId = assetId
 	repo.Asset.Version = asset.Version.Id
 
+	// prepopulate local configuration with asset metadata
+	repo.Config.ApiKey = cfg.ApiKey
+	repo.Config.AuthorId = asset.Creator.Id
+	repo.Config.AuthorType = asset.Creator.Type
+
 	if err = repo.Save(); err != nil {
-		fatal("failed to save versioning", err)
+		fatal("failed to save repository", err)
 	}
+
 	fmt.Fprintf(out, "cloned rbxasset://%s to %s\n", assetId, outDir)
 }

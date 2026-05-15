@@ -17,10 +17,10 @@ func (dto creationContextDto) toCreator() (Creator, error) {
 
 	// if has user id set as user
 	if dto.Creator.UserId != "" {
-		creator.Type = User
+		creator.Type = CreatorTypeUser
 		creator.Id = dto.Creator.UserId
 	} else { // is group
-		creator.Type = Group
+		creator.Type = CreatorTypeGroup
 		creator.Id = dto.Creator.GroupId
 	}
 	return creator, nil

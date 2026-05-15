@@ -26,15 +26,24 @@ Use `roge update` to update roge to the latest version.
 - Roblox [Open Cloud API key](https://create.roblox.com/dashboard/credentials?activeTab=ApiKeysTab)
   - Assets: Read, Write
   - Legacy Assets: Manage
-- your Roblox user ID (found in your profile URL: `roblox.com/users/<id>/profile`)
+- user or group ID
 
 ### Configuration
 
+To use `roge`, you need to configure your Roblox API key and author ID. The author ID can be either your User ID or a Group ID.
+
 ```bash
-roge config set --api-key <api_key> --user-id <user_id> --global
+# set API key and User ID
+roge config set --api-key <api_key> --author-id <user_id> --global
+
+# author is a group
+roge config set --author-id <group_id> --group --global
 ```
 
 Use `--local` instead of `--global` to scope configuration to a specific repository.
+
+> [!IMPORTANT]
+> Although managing group assets is possible with roge, the **legacy-assets** scope is currently not available for Group API keys on Roblox. This means publishing _new_ packages to a group is currently impossible via the API. However, updating existing assets and pulling them works as expected.
 
 ## Usage
 
@@ -97,7 +106,7 @@ MainModuleName
 
 - `init` - initialize a repository in the current directory
 - `config` - `--global`/`--local`
-  - `config set` - set API key and user ID (`--api-key`, `--user-id`)
+  - `config set` - set API key and author ID (`--api-key`, `--author-id (--group)`)
   - `config list` - show current configuration
 - `asset`
   - `asset set` - update asset config (`--id`)

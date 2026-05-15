@@ -27,12 +27,11 @@ func requireApiKey(cfg config.Config) {
 	}
 }
 
-func requireUserId(cfg config.Config) {
-	if cfg.UserId == "" {
-		misuse("user ID is not set; set it with 'roge config set --user-id <USER_ID> --global'")
+func requireAuthorId(cfg config.Config) {
+	if cfg.AuthorId == "" {
+		misuse("author ID is not set; set it with 'roge config set --author-id <AUTHOR_ID> --global'")
 	}
 }
-
 func getAnyCfg() config.Config {
 	cfg := safeGlobalCfg()
 
@@ -41,8 +40,8 @@ func getAnyCfg() config.Config {
 		if repo.Config.ApiKey != "" {
 			cfg.ApiKey = repo.Config.ApiKey
 		}
-		if repo.Config.UserId != "" {
-			cfg.UserId = repo.Config.UserId
+		if repo.Config.AuthorId != "" {
+			cfg.AuthorId = repo.Config.AuthorId
 		}
 	}
 

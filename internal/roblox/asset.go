@@ -149,9 +149,9 @@ func Push(cfg PushConfig) (string, int, error) {
 
 		var creatorDto creatorDto
 		switch cfg.AuthorType {
-		case User:
+		case CreatorTypeUser:
 			creatorDto.UserId = cfg.AuthorId
-		case Group:
+		case CreatorTypeGroup:
 			creatorDto.GroupId = cfg.AuthorId
 		}
 		meta.CreationContext = &creationContextDto{

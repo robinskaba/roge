@@ -3,8 +3,10 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"unicode/utf8"
 
 	"github.com/robinskaba/roge/internal/config"
+	"github.com/robinskaba/roge/internal/roblox"
 	"github.com/spf13/cobra"
 )
 
@@ -19,11 +21,12 @@ var configCmd = &cobra.Command{
 var configSetCmd = &cobra.Command{
 	Use:   "set",
 	Short: "set configuration properties",
-	Long: `Set configuration properties such as api-key and user-id.
+	Long: `Set configuration properties such as api-key and author-id.
 	By default, properties are set locally for the current repository.
 	Use the --global flag to set them globally instead.`,
 	Example: `  roge config set --api-key YOUR_KEY
-		roge config set --user-id 123456 --global`,
+		roge config set --author-id 123456 --global
+		roge config set --author-id 654321 --group --global`,
 	Run: runConfigSet,
 }
 
@@ -40,7 +43,8 @@ var configListCmd = &cobra.Command{
 
 func init() {
 	configSetCmd.Flags().String("api-key", "", "Roblox API key for Assets(read+write), LegacyAssets(manage)")
-	configSetCmd.Flags().String("user-id", "", "user ID of the package author (you)")
+	configSetCmd.Flags().String("author-id", "", "author ID of the package author (you / your group)")
+	configSetCmd.Flags().Bool("group", false, "set a group as a package author")
 
 	configSetCmd.Flags().Bool("global", false, "set to global configuration")
 	configSetCmd.Flags().Bool("local", true, "set to the configuration of the repository")
@@ -58,10 +62,11 @@ func runConfigSet(cmd *cobra.Command, args []string) {
 
 	// load vars
 	apiKey, _ := cmd.Flags().GetString("api-key")
-	userId, _ := cmd.Flags().GetString("user-id")
+	authorId, _ := cmd.Flags().GetString("author-id")
+	isAuthorGroup, _ := cmd.Flags().GetBool("group")
 
 	// need variables
-	if apiKey == "" && userId == "" {
+	if apiKey == "" && authorId == "" {
 		cmd.Help()
 		os.Exit(1)
 	}
@@ -76,11 +81,22 @@ func runConfigSet(cmd *cobra.Command, args []string) {
 	// set vars
 	if apiKey != "" {
 		cfg.ApiKey = apiKey
-		fmt.Fprintf(out, "  set API key to %s\n", apiKey)
+
+		// limit api key length on print
+		formattedApiKey := apiKey
+		if utf8.RuneCountInString(apiKey) > 25 {
+			formattedApiKey = fmt.Sprintf("%.25s...", apiKey)
+		}
+		fmt.Fprintf(out, "-> set API key to: %s\n", formattedApiKey)
 	}
-	if userId != "" {
-		cfg.UserId = userId
-		fmt.Fprintf(out, "  set user ID to %s\n", userId)
+	if authorId != "" {
+		cfg.AuthorId = authorId
+		cfg.AuthorType = roblox.CreatorTypeUser
+		if isAuthorGroup {
+			cfg.AuthorType = roblox.CreatorTypeGroup
+		}
+
+		fmt.Fprintf(out, "-> set %s ID of author to: %s\n", cfg.AuthorType, authorId)
 	}
 
 	if useLocal {

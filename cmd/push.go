@@ -14,7 +14,7 @@ var pushCmd = &cobra.Command{
 	Use:   "push",
 	Short: "publish a new package version of a module",
 	Long: `Publish a new package or update an existing package version on Roblox.
-If the package has not been uploaded yet, a new asset is created using your configured user ID.
+If the package has not been uploaded yet, a new asset is created using your configured author ID.
 The entry point of the package is deduced automatically by looking for an init.luau file or a .luau file matching the directory name.
 Use flags to override the package name and description.`,
 	Example: `  roge push
@@ -33,7 +33,7 @@ func runPush(cmd *cobra.Command, args []string) {
 	repo := safeRepository()
 	cfg := getAnyCfg()
 	requireApiKey(cfg)
-	requireUserId(cfg)
+	requireAuthorId(cfg)
 
 	isNewUpload := repo.Asset.AssetId == ""
 	out := cmd.OutOrStdout()
@@ -67,7 +67,7 @@ func runPush(cmd *cobra.Command, args []string) {
 	}
 	var authorId string
 	if isNewUpload {
-		authorId = cfg.UserId
+		authorId = cfg.AuthorId
 	}
 
 	// set package metadata
@@ -92,7 +92,7 @@ func runPush(cmd *cobra.Command, args []string) {
 		Rbxm:        rbxm,
 		AssetId:     assetId,
 		AuthorId:    authorId,
-		AuthorType:  "USER", // for now always USER, doesnt affect NEW vs UPDATE
+		AuthorType:  roblox.CreatorType(cfg.AuthorType),
 		Name:        pkgName,
 		Description: pkgDescription,
 	})

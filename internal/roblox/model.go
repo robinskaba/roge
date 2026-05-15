@@ -5,12 +5,12 @@ import "time"
 type CreatorType string
 
 const (
-	User  CreatorType = "USER"
-	Group CreatorType = "GROUP"
+	CreatorTypeUser  CreatorType = "USER"
+	CreatorTypeGroup CreatorType = "GROUP"
 )
 
 func (t CreatorType) IsValid() bool {
-	return t == User || t == Group
+	return t == CreatorTypeUser || t == CreatorTypeGroup
 }
 
 type Creator struct {

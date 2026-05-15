@@ -14,7 +14,7 @@ var rootCmd = &cobra.Command{
 	Long: `Roge is a command-line interface for managing packages using Roblox's native package versioning system.
 
 It allows you to clone, pull and push Roblox packages, all from your command line.`,
-	Example: `  roge config set --api-key YOUR_KEY --global
+	Example: `  roge config set --api-key YOUR_KEY --author-id 1234567890 --global
   roge clone 1234567890
   roge push`,
 	Version: Version,

@@ -4,11 +4,14 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+
+	"github.com/robinskaba/roge/internal/roblox"
 )
 
 type Config struct {
-	ApiKey string `json:"api_key"`
-	UserId string `json:"user_id"`
+	ApiKey     string             `json:"api_key"`
+	AuthorId   string             `json:"author_id"`
+	AuthorType roblox.CreatorType `json:"author_type"`
 }
 
 func getConfigPath() (string, error) {
