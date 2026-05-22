@@ -1,6 +1,6 @@
 //go:build linux || darwin
 
-package pkg
+package app
 
 import (
 	"os"

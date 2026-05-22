@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/robinskaba/roge/internal/pkg"
+	"github.com/robinskaba/roge/internal/app"
 	"github.com/spf13/cobra"
 )
 
@@ -21,7 +21,7 @@ func init() {
 func runSetup(cmd *cobra.Command, args []string) {
 	out := cmd.OutOrStdout()
 	fmt.Fprintln(out, "installing roge..")
-	installPath, err := pkg.Setup()
+	installPath, err := app.Setup()
 	if err != nil {
 		fatal("failed to install roge", err)
 	}
