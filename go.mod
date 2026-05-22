@@ -3,8 +3,10 @@ module github.com/robinskaba/roge
 go 1.25.9
 
 require (
+	github.com/creativeprojects/go-selfupdate v1.5.2
 	github.com/robloxapi/rbxfile v0.6.5
 	github.com/spf13/cobra v1.10.2
+	golang.org/x/sys v0.39.0
 )
 
 require (
@@ -13,7 +15,6 @@ require (
 	github.com/Masterminds/semver/v3 v3.4.0 // indirect
 	github.com/anaminus/parse v0.2.0 // indirect
 	github.com/bkaradzic/go-lz4 v1.0.0 // indirect
-	github.com/creativeprojects/go-selfupdate v1.5.2 // indirect
 	github.com/davidmz/go-pageant v1.0.2 // indirect
 	github.com/go-fed/httpsig v1.1.0 // indirect
 	github.com/google/go-github/v74 v74.0.0 // indirect
@@ -27,7 +28,6 @@ require (
 	gitlab.com/gitlab-org/api/client-go v1.9.1 // indirect
 	golang.org/x/crypto v0.46.0 // indirect
 	golang.org/x/oauth2 v0.34.0 // indirect
-	golang.org/x/sys v0.39.0 // indirect
 	golang.org/x/time v0.14.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
