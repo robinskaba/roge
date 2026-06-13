@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/robinskaba/roge/internal/utils"
+	"github.com/robinskaba/roge/internal/system"
 )
 
 func Setup() (string, error) {
@@ -29,7 +29,7 @@ func unixProgramDir() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if err = utils.MoveFileToDir(exePath, installDir); err != nil {
+	if err = system.MoveFileToDir(exePath, installDir); err != nil {
 		return "", err
 	}
 	return installDir, nil
