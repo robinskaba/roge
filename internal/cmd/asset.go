@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/robinskaba/roge/internal/cmd/internal/utils"
+	"github.com/robinskaba/roge/internal/cmd/internal/ux"
 	"github.com/robinskaba/roge/internal/repository"
 	"github.com/spf13/cobra"
 )
@@ -49,7 +51,7 @@ func init() {
 }
 
 func runAssetSet(cmd *cobra.Command, args []string) {
-	repo := safeRepository()
+	repo := utils.SafeRepository()
 	assetId, _ := cmd.Flags().GetString("id")
 	if assetId == "" {
 		cmd.Help()
@@ -64,23 +66,23 @@ func runAssetSet(cmd *cobra.Command, args []string) {
 
 	err := repo.Save()
 	if err != nil {
-		fatal("failed to save repository", err)
+		ux.Fatal("failed to save repository", err)
 	}
 }
 
 func runAssetList(cmd *cobra.Command, args []string) {
-	repo := safeRepository()
+	repo := utils.SafeRepository()
 	out := cmd.OutOrStdout()
-	listStruct(repo.Asset, out)
+	ux.ListStruct(repo.Asset, out)
 }
 
 func runAssetReset(cmd *cobra.Command, args []string) {
-	repo := safeRepository()
+	repo := utils.SafeRepository()
 	repo.Asset = repository.AssetVersioning{}
 	out := cmd.OutOrStdout()
 	fmt.Fprintln(out, "asset configuration was reset")
 	err := repo.Save()
 	if err != nil {
-		fatal("failed to save repository", err)
+		ux.Fatal("failed to save repository", err)
 	}
 }

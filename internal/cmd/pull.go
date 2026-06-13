@@ -2,11 +2,11 @@ package cmd
 
 import (
 	"fmt"
-	"path/filepath"
 
-	"github.com/robinskaba/roge/internal/conversion"
+	"github.com/robinskaba/roge/internal/cmd/internal/shared"
+	"github.com/robinskaba/roge/internal/cmd/internal/utils"
+	"github.com/robinskaba/roge/internal/cmd/internal/ux"
 	"github.com/robinskaba/roge/internal/roblox"
-	"github.com/robinskaba/roge/internal/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -25,46 +25,36 @@ func init() {
 }
 
 func runPull(cmd *cobra.Command, args []string) {
-	repo := safeRepository()
-	cfg := getAnyCfg()
-	requireApiKey(cfg)
+	repo := utils.SafeRepository()
+	cfg := utils.GetAnyCfg()
+	ux.RequireApiKey(cfg)
 
 	if repo.Asset.AssetId == "" {
-		misuse("can not pull without a set asset ID, consider using clone")
+		ux.Misuse("can not pull without a set asset ID, consider using clone")
 	}
 
 	out := cmd.OutOrStdout()
-	fmt.Fprintf(out, "downloading asset: %s\n", repo.Asset.AssetId)
-	rbxFile, err := roblox.Pull(cfg.ApiKey, repo.Asset.AssetId)
+	err := shared.RunDownload(shared.DownloadCfg{
+		ApiKey:   cfg.ApiKey,
+		AssetId:  repo.Asset.AssetId,
+		RepoPath: repo.Path,
+		Out:      out,
+	})
 	if err != nil {
-		fatal("failed to download package from Roblox", err)
-	}
-
-	// clean up old luau files
-	fmt.Fprintln(out, "removing dated luau files..")
-	repoDir := filepath.Dir(repo.Path)
-	err = utils.CleanUpExtension(repoDir, "luau")
-	if err != nil {
-		fatal("failed to clean up old luau files", err)
-	}
-
-	fmt.Fprintln(out, "unpacking asset files..")
-	_, err = conversion.RBXRootToLuau(rbxFile, repoDir)
-	if err != nil {
-		fatal("failed to write package as luau files", err)
+		ux.Fatal("failed to download asset", err)
 	}
 
 	asset, err := roblox.GetAsset(cfg.ApiKey, repo.Asset.AssetId)
 	if err != nil {
-		fatal("failed to fetch asset", err)
+		ux.Fatal("failed to fetch asset", err)
 	}
 	oldVersion := repo.Asset.Version
 	repo.Asset.Version = asset.Version.Id
 
 	if err = repo.Save(); err != nil {
-		fatal("failed to save versioning", err)
+		ux.Fatal("failed to save versioning", err)
 	}
 
 	fmt.Fprintf(out, "from rbxasset://%s (%s)\n", repo.Asset.AssetId, asset.Name)
-	fmt.Fprintf(out, " * %s --> %s\n", colored(fmt.Sprintf("%d", asset.Version.Id), Red), colored(fmt.Sprintf("local %d", oldVersion), Yellow))
+	fmt.Fprintf(out, " * %s --> %s\n", ux.Colored(fmt.Sprintf("%d", asset.Version.Id), ux.Red), ux.Colored(fmt.Sprintf("local %d", oldVersion), ux.Yellow))
 }

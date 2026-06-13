@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/robinskaba/roge/internal/app"
+	"github.com/robinskaba/roge/internal/cmd/internal/ux"
 	"github.com/spf13/cobra"
 )
 
@@ -23,7 +24,7 @@ func runSetup(cmd *cobra.Command, args []string) {
 	fmt.Fprintln(out, "installing roge..")
 	installPath, err := app.Setup()
 	if err != nil {
-		fatal("failed to install roge", err)
+		ux.Fatal("failed to install roge", err)
 	}
 	fmt.Fprintf(out, "successfully installed roge to %s and added it to path, reopen terminal and verify installation with 'roge --version'\n", installPath)
 }

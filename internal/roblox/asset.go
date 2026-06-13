@@ -15,10 +15,13 @@ import (
 	"github.com/robloxapi/rbxfile"
 )
 
-func fetchAssetMetadata(apiKey string, assetId string) (assetDeliveryMetaDto, error) {
+func fetchAssetMetadata(apiKey string, assetId string, version int) (assetDeliveryMetaDto, error) {
 	var metadata assetDeliveryMetaDto
 
 	metaURL := fmt.Sprintf("https://apis.roblox.com/asset-delivery-api/v1/assetId/%s", assetId)
+	if version > 0 {
+		metaURL += fmt.Sprintf("/version/%d", version)
+	}
 
 	body, err := Fetch(metaURL, apiKey)
 	if err != nil {
@@ -92,8 +95,8 @@ func GetAsset(apiKey string, assetId string) (Asset, error) {
 	return asset, nil
 }
 
-func Pull(apiKey string, assetId string) (*rbxfile.Instance, error) {
-	metadata, err := fetchAssetMetadata(apiKey, assetId)
+func Pull(apiKey string, assetId string, version int) (*rbxfile.Instance, error) {
+	metadata, err := fetchAssetMetadata(apiKey, assetId, version)
 	if err != nil {
 		return nil, err
 	}

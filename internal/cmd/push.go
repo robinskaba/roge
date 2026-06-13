@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"path/filepath"
 
+	"github.com/robinskaba/roge/internal/cmd/internal/utils"
+	"github.com/robinskaba/roge/internal/cmd/internal/ux"
 	"github.com/robinskaba/roge/internal/conversion"
 	"github.com/robinskaba/roge/internal/roblox"
 	"github.com/spf13/cobra"
@@ -30,10 +32,10 @@ func init() {
 }
 
 func runPush(cmd *cobra.Command, args []string) {
-	repo := safeRepository()
-	cfg := getAnyCfg()
-	requireApiKey(cfg)
-	requireAuthorId(cfg)
+	repo := utils.SafeRepository()
+	cfg := utils.GetAnyCfg()
+	ux.RequireApiKey(cfg)
+	ux.RequireAuthorId(cfg)
 
 	isNewUpload := repo.Asset.AssetId == ""
 	out := cmd.OutOrStdout()
@@ -43,20 +45,20 @@ func runPush(cmd *cobra.Command, args []string) {
 	pkgEntry, err := conversion.GetPackageEntry(projectDir)
 	if err != nil {
 		if errors.Is(err, conversion.ErrMissingPackageTarget) {
-			misuse("directory must contain either .luau file matching the name of the directory or an init.luau file")
+			ux.Misuse("directory must contain either .luau file matching the name of the directory or an init.luau file")
 		}
-		fatal("failed to deduce target file", err)
+		ux.Fatal("failed to deduce target file", err)
 	}
 
 	// prepare file
 	fmt.Fprintln(out, "packaging luau files..")
 	file, err := conversion.LuauToRBXFile(pkgEntry)
 	if err != nil {
-		fatal("failed to convert file to an rbx instance", err)
+		ux.Fatal("failed to convert file to an rbx instance", err)
 	}
 	rbxm, err := conversion.BuildRbxm(file)
 	if err != nil {
-		fatal("failed to convert an instance to rbxm format", err)
+		ux.Fatal("failed to convert an instance to rbxm format", err)
 	}
 
 	// set general data
@@ -97,7 +99,7 @@ func runPush(cmd *cobra.Command, args []string) {
 		Description: pkgDescription,
 	})
 	if err != nil {
-		fatal("failed to push to Roblox", err)
+		ux.Fatal("failed to push to Roblox", err)
 	}
 
 	// load response to versioning
@@ -106,14 +108,14 @@ func runPush(cmd *cobra.Command, args []string) {
 	repo.Asset.Version = version
 
 	if err = repo.Save(); err != nil {
-		fatal("failed to save repository, but the package was published", err)
+		ux.Fatal("failed to save repository, but the package was published", err)
 	}
 
 	if isNewUpload {
 		fmt.Fprintf(out, "published to a new package (rbxasset://%s) --> %s\n", repo.Asset.AssetId, pkgName)
 	} else {
-		localTxt := colored("local", Green)
-		remoteTxt := colored("remote", Red)
+		localTxt := ux.Colored("local", ux.Green)
+		remoteTxt := ux.Colored("remote", ux.Red)
 		fmt.Fprintf(
 			out,
 			"pushed a new version: %d --> %d %s, %s\n",

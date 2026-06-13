@@ -5,6 +5,8 @@ import (
 	"os"
 	"unicode/utf8"
 
+	"github.com/robinskaba/roge/internal/cmd/internal/utils"
+	"github.com/robinskaba/roge/internal/cmd/internal/ux"
 	"github.com/robinskaba/roge/internal/config"
 	"github.com/robinskaba/roge/internal/roblox"
 	"github.com/spf13/cobra"
@@ -100,15 +102,15 @@ func runConfigSet(cmd *cobra.Command, args []string) {
 	}
 
 	if useLocal {
-		repo := safeRepository() // repository should be cached therefore the same as the one fetched in getRightConfig
+		repo := utils.SafeRepository() // repository should be cached therefore the same as the one fetched in getRightConfig
 		repo.Config = cfg
 		if err := repo.Save(); err != nil {
-			fatal("failed to save local configuration", err)
+			ux.Fatal("failed to save local configuration", err)
 		}
 	} else {
 		err := config.SaveConfig(cfg)
 		if err != nil {
-			fatal("failed to save config", err)
+			ux.Fatal("failed to save config", err)
 		}
 	}
 }
@@ -125,7 +127,7 @@ func runConfigList(cmd *cobra.Command, args []string) {
 	cfg := getRightConfig(useLocal)
 
 	// list print
-	listStruct(cfg, out)
+	ux.ListStruct(cfg, out)
 }
 
 func useLocalFromFlags(cmd *cobra.Command) bool {
@@ -138,10 +140,10 @@ func useLocalFromFlags(cmd *cobra.Command) bool {
 func getRightConfig(useLocal bool) config.Config {
 	var cfg config.Config
 	if useLocal {
-		repo := safeRepository()
+		repo := utils.SafeRepository()
 		cfg = repo.Config
 	} else {
-		cfg = safeGlobalCfg()
+		cfg = utils.SafeGlobalCfg()
 	}
 	return cfg
 }

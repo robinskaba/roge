@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/robinskaba/roge/internal/app"
+	"github.com/robinskaba/roge/internal/cmd/internal/ux"
 	"github.com/spf13/cobra"
 )
 
@@ -26,7 +27,7 @@ func runUpdate(cmd *cobra.Command, args []string) {
 	fmt.Fprintln(out, "checking for the latest version..")
 	updated, latest, err := app.Update(ctx, Version)
 	if err != nil {
-		fatal("failed to update roge", err)
+		ux.Fatal("failed to update roge", err)
 	}
 
 	if !updated {

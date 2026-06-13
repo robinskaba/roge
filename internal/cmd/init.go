@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"path/filepath"
 
+	"github.com/robinskaba/roge/internal/cmd/internal/ux"
 	"github.com/robinskaba/roge/internal/repository"
 	"github.com/spf13/cobra"
 )
@@ -24,11 +25,11 @@ func init() {
 func runInit(cmd *cobra.Command, args []string) {
 	_, err := repository.Initialize(".")
 	if err != nil {
-		fatal("failed to initialize roge repository", err)
+		ux.Fatal("failed to initialize roge repository", err)
 	}
 	absPath, err := filepath.Abs(".")
 	if err != nil {
-		fatal("failed to get absolute path of repository", err)
+		ux.Fatal("failed to get absolute path of repository", err)
 	}
 	fmt.Fprintf(cmd.OutOrStdout(), "initialized empty roge repository in %s\n", absPath)
 }

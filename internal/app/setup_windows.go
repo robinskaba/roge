@@ -9,7 +9,7 @@ import (
 	"syscall"
 	"unsafe"
 
-	"github.com/robinskaba/roge/internal/utils"
+	"github.com/robinskaba/roge/internal/system"
 	"golang.org/x/sys/windows/registry"
 )
 
@@ -32,7 +32,7 @@ func windowsProgramDir() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if err := utils.MoveFileToDir(exePath, installDir); err != nil {
+	if err := system.MoveFileToDir(exePath, installDir); err != nil {
 		return "", err
 	}
 	return installDir, nil

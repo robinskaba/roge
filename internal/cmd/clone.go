@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/robinskaba/roge/internal/cmd/internal/utils"
+	"github.com/robinskaba/roge/internal/cmd/internal/ux"
 	"github.com/robinskaba/roge/internal/conversion"
 	"github.com/robinskaba/roge/internal/repository"
 	"github.com/robinskaba/roge/internal/roblox"
@@ -26,37 +28,37 @@ func init() {
 }
 
 func runClone(cmd *cobra.Command, args []string) {
-	cfg := getAnyCfg()
-	requireApiKey(cfg)
+	cfg := utils.GetAnyCfg()
+	ux.RequireApiKey(cfg)
 
 	assetId := args[0]
 
 	out := cmd.OutOrStdout()
 	fmt.Fprintf(out, "downloading asset: %s\n", assetId)
-	rbxFile, err := roblox.Pull(cfg.ApiKey, assetId)
+	rbxFile, err := roblox.Pull(cfg.ApiKey, assetId, 0)
 	if err != nil {
-		fatal("failed to download package from Roblox", err)
+		ux.Fatal("failed to download package from Roblox", err)
 	}
 
 	fmt.Fprintln(out, "unpacking asset files..")
 	name := rbxFile.Properties["Name"].String()
 	outDir := name
 	if err = os.MkdirAll(outDir, 0755); err != nil {
-		fatal("failed to create output directory", err)
+		ux.Fatal("failed to create output directory", err)
 	}
 	_, err = conversion.RBXRootToLuau(rbxFile, outDir)
 	if err != nil {
-		fatal("failed to write package as luau files", err)
+		ux.Fatal("failed to write package as luau files", err)
 	}
 
 	fmt.Fprintln(out, "intializing roge repository..")
 	asset, err := roblox.GetAsset(cfg.ApiKey, assetId)
 	if err != nil {
-		fatal("failed to fetch asset", err)
+		ux.Fatal("failed to fetch asset", err)
 	}
 	repo, err := repository.Initialize(outDir)
 	if err != nil {
-		fatal("failed to initialize roge repository", err)
+		ux.Fatal("failed to initialize roge repository", err)
 	}
 	repo.Asset.AssetId = assetId
 	repo.Asset.Version = asset.Version.Id
@@ -67,7 +69,7 @@ func runClone(cmd *cobra.Command, args []string) {
 	repo.Config.AuthorType = asset.Creator.Type
 
 	if err = repo.Save(); err != nil {
-		fatal("failed to save repository", err)
+		ux.Fatal("failed to save repository", err)
 	}
 
 	fmt.Fprintf(out, "cloned rbxasset://%s to %s\n", assetId, outDir)

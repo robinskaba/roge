@@ -5,6 +5,8 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/robinskaba/roge/internal/cmd/internal/utils"
+	"github.com/robinskaba/roge/internal/cmd/internal/ux"
 	"github.com/robinskaba/roge/internal/roblox"
 	"github.com/spf13/cobra"
 )
@@ -24,13 +26,13 @@ func init() {
 }
 
 func runLog(cmd *cobra.Command, args []string) {
-	cfg := getAnyCfg()
-	requireApiKey(cfg)
-	repo := safeRepository()
+	cfg := utils.GetAnyCfg()
+	ux.RequireApiKey(cfg)
+	repo := utils.SafeRepository()
 
 	versions, err := roblox.GetVersions(cfg.ApiKey, repo.Asset.AssetId)
 	if err != nil {
-		fatal("failed to retrieve package versions", err)
+		ux.Fatal("failed to retrieve package versions", err)
 	}
 
 	out := cmd.OutOrStdout()
@@ -46,18 +48,18 @@ func runLog(cmd *cobra.Command, args []string) {
 		clock := v.Time.Format("15:04")
 
 		// row formatting
-		logRow := fmt.Sprintf("%s %-10s %-5s", colored(paddedId, Yellow), date, clock)
+		logRow := fmt.Sprintf("%s %-10s %-5s", ux.Colored(paddedId, ux.Yellow), date, clock)
 
 		// highlight versions
 		if v.Id == repo.Asset.Version {
-			logRow += " " + colored("local", Green)
+			logRow += " " + ux.Colored("local", ux.Green)
 		}
 		if v == versions[0] {
 			prefix := " "
 			if v.Id == repo.Asset.Version {
 				prefix = ", "
 			}
-			logRow += prefix + colored("remote", Red)
+			logRow += prefix + ux.Colored("remote", ux.Red)
 		}
 
 		fmt.Fprintln(out, logRow)

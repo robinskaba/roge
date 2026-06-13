@@ -114,6 +114,7 @@ MainModuleName
   - `asset reset` - reset asset configuration to defaults
 - `push` - publish a new version (`--name`, `--description`)
 - `pull` - overwrite local files with the latest version from Roblox
+- `checkout <version>` - overwrite local files with a specific package version
 - `clone <asset_id>` - clone a package into a new local directory
 - `log` - list all versions with timestamps
 - `update` - update the roge binary to the latest version
