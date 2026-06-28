@@ -14,7 +14,7 @@ builds:
       - amd64
       - arm64
     ldflags:
-      - -X github.com/robinskaba/roge/cmd.Version={{.Version}} # set Version variable in version.go to the one set by goroleaser
+      - -X github.com/robinskaba/roge/internal/cmd.Version={{.Version}} # set Version variable in root.go to the one set by goreleaser
     ignore:
       - goos: windows
         goarch: arm64
